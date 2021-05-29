@@ -9,7 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ReClaim">
-        <activity android:name=".CreateActivity"></activity>
+        <activity android:name=".AddbiayaActivity"></activity>
+        <activity
+            android:name=".AddBiayaActivity"
+            android:label="@string/title_activity_add_biaya"
+            android:theme="@style/Theme.ReClaim.NoActionBar" />
+        <activity android:name=".CreateActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

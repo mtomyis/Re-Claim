@@ -8,7 +8,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:background="@drawable/main_header"
+        android:layout_height="230dp">
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -16,8 +17,106 @@
             android:src="@drawable/ic_outline_notifications_none_24"
             app:backgroundTint="@android:color/transparent"
             tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="340dp"
-            tools:layout_editor_absoluteY="16dp" />
+            tools:layout_editor_absoluteX="356dp"
+            tools:layout_editor_absoluteY="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/latolight"
+            android:text="Re-Claim"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteY="79dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/latobold"
+            android:text="Reimbursement Claim"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteY="98dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@drawable/layoutuser"
+            android:layout_width="@dimen/_100ssp"
+            android:layout_height="@dimen/_45ssp"
+            tools:ignore="MissingConstraints"
+            android:layout_marginEnd="@dimen/_16ssp"
+            tools:layout_editor_absoluteX="265dp"
+            tools:layout_editor_absoluteY="68dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_person_24"
+                tools:layout_editor_absoluteX="6dp"
+                tools:layout_editor_absoluteY="11dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/latoregular"
+                android:text="Username"
+                android:textSize="@dimen/_12ssp"
+                tools:layout_editor_absoluteX="45dp"
+                tools:layout_editor_absoluteY="21dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:background="@drawable/rounded_layout_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="170dp">
+        <TextView
+            android:layout_marginTop="@dimen/_14ssp"
+            android:layout_marginLeft="@dimen/_16ssp"
+            android:text="List My Claim"
+            android:textStyle="bold"
+            android:fontFamily="@font/latobold"
+            android:textSize="@dimen/_14ssp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/_16ssp"
+            android:layout_marginRight="@dimen/_16ssp"
+            android:layout_marginTop="@dimen/_16ssp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/id_rv_main"
+                tools:listitem="@layout/item_claim"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_createnew"
+        android:onClick="btn_createnew"
+        app:backgroundTint="#00B5AD"
+        app:cornerRadius="8dp"
+        app:rippleColor="#33AAAAAA"
+        app:strokeWidth="2dp"
+        android:background="@drawable/floating_btn"
+        android:drawableLeft="@drawable/ic_twotone_add_circle_24"
+        android:text="New"
+        android:textColor="#FFFFFF"
+        android:layout_margin="@dimen/_16ssp"
+        android:layout_gravity="end|bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </FrameLayout>
