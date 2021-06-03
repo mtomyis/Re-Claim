@@ -8,94 +8,103 @@
     tools:context=".CreateActivity">
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/latoregular"
-            android:text="Tanggal"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="40dp"
-            tools:layout_editor_absoluteY="1dp" />
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:fontFamily="@font/latoregular"
+        android:text="Tanggal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_width="@dimen/_24ssp"
-            android:layout_height="@dimen/_24ssp"
-            android:src="@drawable/ic_baseline_calendar_today_24"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="16dp" />
+    <ImageView
+        android:id="@+id/imageView10"
+        android:layout_width="@dimen/_24ssp"
+        android:layout_height="@dimen/_24ssp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="@dimen/_8ssp"
+        android:src="@drawable/ic_baseline_calendar_today_24"
+        app:layout_constraintEnd_toStartOf="@+id/ed_tgl_reimburs"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:layout_width="330dp"
-            android:layout_height="31dp"
-            android:layout_marginStart="40dp"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteY="16dp" />
+    <EditText
+        android:id="@+id/ed_tgl_reimburs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="@dimen/_5ssp"
+        android:inputType="datetime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/latoregular"
-            android:text="Nama Reimbursement"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="40dp"
-            tools:layout_editor_absoluteY="57dp" />
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/latoregular"
+        android:text="Nama Reimbursement"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ed_tgl_reimburs" />
 
-        <ImageView
-            android:layout_width="@dimen/_24ssp"
-            android:layout_height="@dimen/_24ssp"
-            android:src="@drawable/ic_baseline_insert_drive_file_24"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="73dp" />
+    <ImageView
+        android:id="@+id/imageView11"
+        android:layout_width="@dimen/_24ssp"
+        android:layout_height="@dimen/_24ssp"
+        android:layout_marginTop="@dimen/_35ssp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_baseline_insert_drive_file_24"
+        app:layout_constraintEnd_toStartOf="@+id/textView15"
+        app:layout_constraintTop_toBottomOf="@+id/imageView10" />
 
-        <EditText
-            android:layout_width="330dp"
-            android:layout_height="31dp"
-            android:layout_marginStart="40dp"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteY="73dp" />
+    <EditText
+        android:id="@+id/ed_nama_reimburse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="@dimen/_5ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="@dimen/_16ssp"
         android:fontFamily="@font/latoregular"
         android:text="List Biaya"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="128dp" />
+        app:layout_constraintStart_toEndOf="@+id/idimglistbiaya"
+        app:layout_constraintTop_toBottomOf="@+id/ed_nama_reimburse" />
 
-        <ImageView
-            android:id="@+id/idimglistbiaya"
-            android:layout_width="@dimen/_24ssp"
-            android:layout_height="@dimen/_24ssp"
-            android:src="@drawable/ic_baseline_list_24"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="121dp" />
+    <ImageView
+        android:id="@+id/idimglistbiaya"
+        android:layout_width="@dimen/_24ssp"
+        android:layout_height="@dimen/_24ssp"
+        android:layout_marginTop="@dimen/_25ssp"
+        android:src="@drawable/ic_baseline_list_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView11" />
 
     <Button
         android:id="@+id/btn_tambahbiaya"
-        android:onClick="btn_tambahbiaya"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
+        android:backgroundTint="#00F0B4"
+        android:onClick="btn_tambahbiaya"
         android:text="Tambah Biaya"
-        android:textColor="#00F0B4"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/scroll_list_biaya"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toBottomOf="@+id/ed_nama_reimburse" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:ignore="MissingConstraints"
         android:id="@+id/scroll_list_biaya"
-        android:layout_marginTop="160dp"
-        tools:layout_editor_absoluteX="21dp">
+        android:layout_marginTop="195dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -103,8 +112,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_list_biaya"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:ignore="MissingConstraints">
+                android:layout_height="match_parent">
             </androidx.recyclerview.widget.RecyclerView>
 
             <LinearLayout
@@ -116,7 +124,7 @@
                     android:layout_width="@dimen/_24ssp"
                     android:layout_height="@dimen/_24ssp"
                     android:src="@drawable/ic_baseline_insert_drive_file_24"
-                    tools:ignore="MissingConstraints"/>
+                    />
 
                 <TextView
                     android:layout_marginLeft="@dimen/_8ssp"
@@ -124,30 +132,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/latoregular"
-                    android:text="Total :"
-                    tools:ignore="MissingConstraints" />
+                    android:text="Total :"/>
                 <TextView
                     android:layout_marginLeft="@dimen/_8ssp"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/latoregular"
-                    android:text="Rp. 560.000"
-                    tools:ignore="MissingConstraints" />
+                    android:text="Rp. 560.000"/>
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
 
     <Button
-        android:visibility="gone"
+        android:id="@+id/btn_simpan_reimburs"
+        android:visibility="visible"
         android:text="Simpan"
         android:backgroundTint="#00F0B4"
         android:layout_width="wrap_content"
         android:layout_margin="@dimen/_16ssp"
         app:layout_constraintBottom_toBottomOf="@+id/scroll_list_biaya"
         app:layout_constraintEnd_toEndOf="@+id/scroll_list_biaya"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints" />
+        android:layout_height="wrap_content"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

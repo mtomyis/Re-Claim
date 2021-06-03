@@ -4,11 +4,40 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import com.conceptdesign.re_claim.Adapter.ListMyClaimAdapter
+import com.conceptdesign.re_claim.DBHelper.DBHelper
+import com.conceptdesign.re_claim.Model.Reimbursement
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    internal lateinit var db:DBHelper
+    internal var lstReimb:List<Reimbursement> = ArrayList<Reimbursement>()
+    var ID: String= "ID"
+    val REIMBUST: String = "REIMBUST"
+    val TOTAL: String = "TOTAL"
+    val TANGGAL: String = "TANGGAL"
+
+    fun onItemClicked(get: Reimbursement?){
+        Toast.makeText(this, "klick "+get?.reimburs, Toast.LENGTH_LONG).show()
+        val intent = Intent(this, CreateActivity::class.java)
+        intent.putExtra(ID, get?.id)
+        intent.putExtra(REIMBUST, get?.reimburs)
+        intent.putExtra(TANGGAL, get?.tgl)
+        intent.putExtra(TOTAL, get?.total)
+        startActivity(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        db = DBHelper(this)
+        tampilkanData()
+    }
+
+    fun tampilkanData(){
+        lstReimb = db.allReimburs
+        id_rv_main.adapter=ListMyClaimAdapter(lstReimb, this@MainActivity)
     }
 
     fun btn_createnew(view: View) {
