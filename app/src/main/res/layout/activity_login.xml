@@ -42,7 +42,7 @@
             android:layout_marginRight="@dimen/_32ssp"
             android:background="@drawable/rounded_input"
             android:gravity="center"
-            android:hint="username"
+            android:hint="nama"
             android:padding="@dimen/_5ssp"
             android:textColor="@color/black"
             android:textSize="@dimen/_16ssp"
