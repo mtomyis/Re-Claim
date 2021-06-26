@@ -3,12 +3,14 @@ package com.conceptdesign.re_claim
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.conceptdesign.re_claim.Adapter.ListMyClaimAdapter
 import com.conceptdesign.re_claim.DBHelper.DBHelper
 import com.conceptdesign.re_claim.Model.Reimbursement
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     internal lateinit var db:DBHelper
@@ -37,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     fun tampilkanData(){
         lstReimb = db.allReimburs
+        Log.d("qwqwqwqw", lstReimb.get(0).status .toString())
         id_rv_main.adapter=ListMyClaimAdapter(lstReimb, this@MainActivity)
     }
 

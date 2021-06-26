@@ -5,10 +5,10 @@ class Reimbursement {
     var tgl:String?=null
     var reimburs:String?=null
     var status:Int=0
-    var total:Int=0
+    var total:String?=null
 
     constructor(){}
-    constructor(id:Int,tgl:String,reimburs:String,status:Int,total:Int)
+    constructor(id:Int,tgl:String,reimburs:String,status:Int,total:String)
     {
         this.id
         this.tgl
