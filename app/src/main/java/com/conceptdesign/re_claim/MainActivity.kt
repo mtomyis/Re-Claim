@@ -20,6 +20,11 @@ class MainActivity : AppCompatActivity() {
     val TOTAL: String = "TOTAL"
     val TANGGAL: String = "TANGGAL"
 
+    override fun onStart() {
+        tampilkanData()
+        super.onStart()
+    }
+
     fun onItemClicked(get: Reimbursement?){
         Toast.makeText(this, "klick "+get?.reimburs, Toast.LENGTH_LONG).show()
         val intent = Intent(this, CreateActivity::class.java)
@@ -34,12 +39,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         db = DBHelper(this)
-        tampilkanData()
     }
 
     fun tampilkanData(){
         lstReimb = db.allReimburs
-        Log.d("qwqwqwqw", lstReimb.get(0).status .toString())
+        Log.d("qwqwqwqw", lstReimb.get(0).status.toString())
         id_rv_main.adapter=ListMyClaimAdapter(lstReimb, this@MainActivity)
     }
 

@@ -11,14 +11,14 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="0dp"
         android:text="Keperluan"
-        app:layout_constraintStart_toStartOf="@+id/editText"
+        app:layout_constraintStart_toStartOf="@+id/ed_keperluan"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/ed_keperluan"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,12 +32,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8ssp"
         android:text="Nominal"
-        app:layout_constraintStart_toStartOf="@+id/editText2"
-        app:layout_constraintTop_toBottomOf="@+id/editText"
+        app:layout_constraintStart_toStartOf="@+id/ed_nominal"
+        app:layout_constraintTop_toBottomOf="@+id/ed_keperluan"
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/ed_nominal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +53,7 @@
         android:weightSum="100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2"
+        app:layout_constraintTop_toBottomOf="@+id/ed_nominal"
         tools:ignore="MissingConstraints">
 
         <RadioButton

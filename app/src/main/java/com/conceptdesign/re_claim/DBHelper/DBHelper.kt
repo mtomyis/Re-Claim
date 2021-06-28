@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.conceptdesign.re_claim.Model.M_reimbusment
 import com.conceptdesign.re_claim.Model.Reimbursement
 
 class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATABASE_VER) {
@@ -12,7 +13,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         private val DATABASE_NAME = "reimbursement.db"
         private val DATABASE_VER = 1
 
-        //table
+        //table reimbus
         private val TABLE_REIMBURS = "reimbursement"
         private val COL_ID_REIMBURS = "id"
         private val COL_NAME_REIMBURS = "name"
@@ -20,12 +21,24 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         private val COL_STATUS_REIMBURS = "status"
         private val COL_TOTAL = "total"
 
+        //table detail_reimbust
+        private val TABLE_DETAIL = "detail"
+        private val COL_ID_DETAIL = "id"
+        private val COL_KEPERLUAN_DETAIL = "keperluan"
+        private val COL_MILIK_DETAIL = "milik"
+        private val COL_NOMINAL_RDETAIL = "nominal"
+        private val COL_TANGGAL_DETAIL = "tgl"
+        private val COL_SRC_DETAIL = "src"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         val CREATE_TABLE_QUERY = ("CREATE TABLE $TABLE_REIMBURS ($COL_ID_REIMBURS INTEGER PRIMARY KEY AUTOINCREMENT, $COL_NAME_REIMBURS TEXT, " +
                 "$COL_TGL_REIMBURS DATETIME, $COL_TOTAL text, $COL_STATUS_REIMBURS INTEGER)")
         db!!.execSQL(CREATE_TABLE_QUERY)
+
+//        val CREATE_TABLE_DETAIL_QUERY = ("CREATE TABLE $TABLE_REIMBURS ($COL_ID_REIMBURS INTEGER PRIMARY KEY AUTOINCREMENT, $COL_NAME_REIMBURS TEXT, " +
+//                "$COL_TGL_REIMBURS DATETIME, $COL_TOTAL text, $COL_STATUS_REIMBURS INTEGER)")
+//        db!!.execSQL(CREATE_TABLE_QUERY)
 
         val INSERT_TABLE_QUERY = ("INSERT INTO $TABLE_REIMBURS($COL_ID_REIMBURS,$COL_NAME_REIMBURS,$COL_TGL_REIMBURS,$COL_TOTAL,$COL_STATUS_REIMBURS) "+
                 "VALUES (1,'Perjalanan Banyuwangi','2021-06-25', '230000',1)")
@@ -61,7 +74,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
             return lstReimburs
         }
 
-    fun addReimburs(reimbursement: Reimbursement)
+    fun addReimburs(reimbursement: M_reimbusment)
     {
         val db = this.writableDatabase
         val values = ContentValues()
@@ -73,7 +86,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         db.close()
     }
 
-    fun updateReimburs(reimbursement: Reimbursement):Int
+    fun updateReimburs(reimbursement: M_reimbusment):Int
     {
         val db = this.writableDatabase
         val values = ContentValues()
@@ -86,7 +99,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         return db.update(TABLE_REIMBURS, values,"$COL_ID_REIMBURS=?", arrayOf(reimbursement.id.toString()))
     }
 
-    fun deleteReimburs(reimbursement: Reimbursement)
+    fun deleteReimburs(reimbursement: M_reimbusment)
     {
         val db = this.writableDatabase
         db.delete(TABLE_REIMBURS,"$COL_ID_REIMBURS=?", arrayOf(reimbursement.id.toString()))

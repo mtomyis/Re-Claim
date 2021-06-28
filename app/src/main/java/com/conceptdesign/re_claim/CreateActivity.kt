@@ -8,13 +8,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import com.conceptdesign.re_claim.DBHelper.DBHelper
+import com.conceptdesign.re_claim.Model.M_reimbusment
 import com.conceptdesign.re_claim.Model.Reimbursement
 import kotlinx.android.synthetic.main.activity_create.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.log
 
 class CreateActivity : AppCompatActivity() {
 
@@ -22,6 +25,12 @@ class CreateActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create)
+
+        val namareimbus = findViewById(R.id.ed_nama_reimburse) as EditText
+        val tglreimbus = findViewById(R.id.ed_tgl_reimburs) as EditText
+
+//        hidden btn
+        btn_tambahbiaya.visibility = View.GONE
 
         //input tanggal a
         // set tanggal awal hari ini
@@ -55,16 +64,22 @@ class CreateActivity : AppCompatActivity() {
         db = DBHelper(this)
         //event
         btn_simpan_reimburs.setOnClickListener {
-//            Toast.makeText(this, "tgl : "+ed_tgl_reimburs, Toast.LENGTH_LONG).show()
-            if (ed_nama_reimburse!=null && ed_tgl_reimburs!=null){
-                val add_reimbursement = Reimbursement(
+            if (!(namareimbus.text.toString().equals("")) && !(tglreimbus.text.toString().equals(""))){
+//                Log.d("reim : ", ""+namareimbus.text.toString())
+                val add_reimbursement = M_reimbusment(
                         0,
                         ed_tgl_reimburs.text.toString(),
-                        ed_nama_reimburse.text.toString(),
+                        namareimbus.text.toString(),
                         0,
                         "0"
                 )
+//                Log.d("reim : ", ""+add_reimbursement.reimburs)
                 db.addReimburs(add_reimbursement)
+                Toast.makeText(this, "Berhasil", Toast.LENGTH_LONG).show()
+                btn_tambahbiaya.visibility = View.VISIBLE
+            }
+            else{
+                Toast.makeText(this, "Data Belum Terisi", Toast.LENGTH_LONG).show()
             }
         }
     }

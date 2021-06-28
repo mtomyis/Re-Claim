@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:fontFamily="@font/latoregular"
-        android:text="Tanggal"
+        android:text="Tanggal Mulai"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
