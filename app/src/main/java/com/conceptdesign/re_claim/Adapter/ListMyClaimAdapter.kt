@@ -29,6 +29,8 @@ class ListMyClaimAdapter(val lstReimburs:List<Reimbursement>, val itemClickListe
             itemView.id_txt_tanggal.text = get?.tgl
             val total ="Rp. ${get?.total}"
             itemView.id_txt_total.text = total
+
+            itemView.setOnClickListener { clickListener.onItemClicked(get) }
         }
     }
 }

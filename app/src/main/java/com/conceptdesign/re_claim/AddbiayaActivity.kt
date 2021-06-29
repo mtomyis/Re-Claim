@@ -8,11 +8,14 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Toast
+import com.conceptdesign.re_claim.DBHelper.DBHelper
+import com.conceptdesign.re_claim.Model.M_detailReimbusment
 import kotlinx.android.synthetic.main.activity_addbiaya.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddbiayaActivity : AppCompatActivity() {
+    internal lateinit var db:DBHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_addbiaya)
@@ -50,6 +53,7 @@ class AddbiayaActivity : AppCompatActivity() {
         }
         //input tanggal b
         // event
+        db = DBHelper(this)
         btn_simpanbiaya.setOnClickListener {
             val idr: Int = RG.checkedRadioButtonId
             if (idr!=-1 // If any radio button checked from radio group
@@ -58,7 +62,23 @@ class AddbiayaActivity : AppCompatActivity() {
                     && !(ed_nominal.text.toString().equals(""))){
                 // Get the instance of radio button using id
                 val radio: RadioButton = findViewById(idr)
-                Toast.makeText(applicationContext,"On button click :" +" ${radio.text}",Toast.LENGTH_SHORT).show()
+                val add_detailReimbursment = M_detailReimbusment(
+                        0,
+                        keperluan.text.toString(),
+                        radio.text.toString(),
+                        ed_nominal.text.toString(),
+                        tglreimbus.text.toString(),
+                        "",
+                        db.getOneReimburs.id //ambil data dahulu dari sqlite
+                )
+//                Log.d("datadetail : ", ""+add_detailReimbursment.fk)
+                db.addDetailReimburs(add_detailReimbursment)
+                Toast.makeText(this, "Berhasil Tersimpan", Toast.LENGTH_LONG).show()
+//                keperluan.getText().clear()
+//                ed_nominal.getText().clear()
+//                tglreimbus.getText().clear()
+//                src set clear
+//                Toast.makeText(applicationContext,"On button click :" +" ${radio.text}",Toast.LENGTH_SHORT).show()
             }else{
                 // If no radio button checked in this radio group
                 Toast.makeText(applicationContext,"Data Belum Lengkap",

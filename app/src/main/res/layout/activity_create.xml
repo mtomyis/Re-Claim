@@ -96,7 +96,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#00F0B4"
-        android:onClick="btn_tambahbiaya"
         android:text="Tambah Biaya"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/scroll_list_biaya"
@@ -114,6 +113,7 @@
             android:orientation="vertical" >
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_list_biaya"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             </androidx.recyclerview.widget.RecyclerView>
@@ -135,14 +135,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/latoregular"
-                    android:text="Total :"/>
+                    android:text="Total :   Rp"/>
                 <TextView
-                    android:layout_marginLeft="@dimen/_8ssp"
+                    android:id="@+id/id_total_reimbus"
+                    android:layout_marginLeft="@dimen/_3ssp"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/latoregular"
-                    android:text="Rp. 560.000"/>
+                    android:text="560.000"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -150,8 +151,18 @@
 
     <Button
         android:id="@+id/btn_simpan_reimburs"
-        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_16ssp"
+        android:backgroundTint="#00F0B4"
         android:text="Simpan"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/scroll_list_biaya"
+        app:layout_constraintEnd_toEndOf="@+id/scroll_list_biaya" />
+    <Button
+        android:id="@+id/btn_edit_reimburs"
+        android:visibility="gone"
+        android:text="Perbarui"
         android:backgroundTint="#00F0B4"
         android:layout_width="wrap_content"
         android:layout_margin="@dimen/_16ssp"

@@ -15,10 +15,21 @@ import kotlin.math.log
 class MainActivity : AppCompatActivity() {
     internal lateinit var db:DBHelper
     internal var lstReimb:List<Reimbursement> = ArrayList<Reimbursement>()
-    var ID: String= "ID"
-    val REIMBUST: String = "REIMBUST"
-    val TOTAL: String = "TOTAL"
-    val TANGGAL: String = "TANGGAL"
+    companion object {
+        var ID: String= "ID"
+        val REIMBUST: String = "REIMBUST"
+        val TANGGAL: String = "TANGGAL"
+        val TOTAL: String = "TOTAL"
+        val STATUS: String = "STATUS"
+
+        val KEPERLUAN: String = "KEPERLUAN"
+        val MILIK: String = "MILIK"
+        val NOMINAL: String = "NOMINAL"
+        val SRC: String = "SRC"
+        val FK: String = "FK"
+
+    }
+
 
     override fun onStart() {
         tampilkanData()
@@ -26,12 +37,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onItemClicked(get: Reimbursement?){
-        Toast.makeText(this, "klick "+get?.reimburs, Toast.LENGTH_LONG).show()
-        val intent = Intent(this, CreateActivity::class.java)
+//        Toast.makeText(this, "klick "+get?.id, Toast.LENGTH_LONG).show()
+        Log.d("jes", get?.id.toString())
+        val intent = Intent(this, UpdateActivity::class.java)
         intent.putExtra(ID, get?.id)
         intent.putExtra(REIMBUST, get?.reimburs)
         intent.putExtra(TANGGAL, get?.tgl)
         intent.putExtra(TOTAL, get?.total)
+        intent.putExtra(STATUS, get?.status)
         startActivity(intent)
     }
 
@@ -43,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
     fun tampilkanData(){
         lstReimb = db.allReimburs
-        Log.d("qwqwqwqw", lstReimb.get(0).status.toString())
+//        Log.d("qwqwqwqw", lstReimb.get(0).status.toString())
         id_rv_main.adapter=ListMyClaimAdapter(lstReimb, this@MainActivity)
     }
 

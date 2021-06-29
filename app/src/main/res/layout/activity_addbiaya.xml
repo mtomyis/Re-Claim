@@ -39,6 +39,7 @@
     <EditText
         android:id="@+id/ed_nominal"
         android:layout_width="0dp"
+        android:inputType="number"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="40"
-            android:text="Uang Milik Sendiri" />
+            android:text="Uang Pribadi" />
     </RadioGroup>
 
     <EditText

@@ -108,12 +108,13 @@
             android:layout_marginTop="@dimen/_16ssp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/id_rv_main"
-                tools:listitem="@layout/item_claim"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_claim" />
         </LinearLayout>
     </LinearLayout>
 

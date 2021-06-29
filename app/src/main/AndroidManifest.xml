@@ -12,6 +12,7 @@
         <activity
             android:name=".AddbiayaActivity"/>
         <activity android:name=".CreateActivity" />
+        <activity android:name=".UpdateActivity" />
         <activity android:name=".LoginActivity"
             android:theme="@style/Theme.ReClaim.NoActionBar">
             <intent-filter>
