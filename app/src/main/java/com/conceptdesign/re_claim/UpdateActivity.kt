@@ -49,7 +49,7 @@ class UpdateActivity : AppCompatActivity() {
     fun onItemClicked(get: DetailReimbursment?){
 //        Toast.makeText(this, "klick "+get?.id, Toast.LENGTH_LONG).show()
 //        Log.d("jes", get?.id.toString())
-        val intent = Intent(this, AddbiayaActivity::class.java)
+        val intent = Intent(this, UpdatebiayaActivity::class.java)
         intent.putExtra(ID, get?.id)
         intent.putExtra(KEPERLUAN, get?.keperluan)
         intent.putExtra(TANGGAL, get?.tgl)
@@ -84,6 +84,7 @@ class UpdateActivity : AppCompatActivity() {
         val simpleFormat =  DateTimeFormatter.ISO_DATE;
         val convertedDate = LocalDate.parse(dateInString, simpleFormat)
         tglreimbus.setText("$convertedDate")
+        tanggalfix="$convertedDate"
 
         val myCalendar = Calendar.getInstance()
         val date = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -102,10 +103,8 @@ class UpdateActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
 
-            //Toast.makeText(LihatPengingatPadiActivity.this, "tanggal: "+ dpersem.getDate() +"/"+(dpersem.getMonth()+1) +"/"+ (dpersem.getYear()+1900), Toast.LENGTH_SHORT).show();
             tanggalfix = "" + (dpersem!!.year + 1900).toString() + "-" + (dpersem!!.month + 1).toString() + "-" + dpersem!!.date
 
-            //Toast.makeText(LihatPengingatPadiActivity.this, "tanggal: "+tanggalpersemaian, Toast.LENGTH_SHORT).show();
         }
         ed_tgl_reimburs.setOnClickListener(View.OnClickListener { DatePickerDialog(this, date, myCalendar[Calendar.YEAR], myCalendar[Calendar.MONTH], myCalendar[Calendar.DAY_OF_MONTH]).show() })
 
@@ -117,7 +116,7 @@ class UpdateActivity : AppCompatActivity() {
             if (!(namareimbus.text.toString().equals("")) && !(tglreimbus.text.toString().equals(""))){
                 val edit_reimbursement = M_reimbusment(
                         intent.getIntExtra(ID,0),
-                        ed_tgl_reimburs.text.toString(),
+                        tanggalfix,
                         namareimbus.text.toString(),
                         intent.getIntExtra(STATUS,0),
                         "0" //liat count db sqlite
@@ -132,9 +131,10 @@ class UpdateActivity : AppCompatActivity() {
         }
 
         btn_tambahbiaya.setOnClickListener {
+            val idreim = intent.getIntExtra(ID,0)
 //            Log.d("id : ", ""+db.getOneReimburs.id+" nama : "+db.getOneReimburs.reimburs)
             intent = Intent(applicationContext, AddbiayaActivity::class.java)
-            intent.putExtra(ID, intent.getStringExtra(ID))
+            intent.putExtra(ID, idreim)
             startActivity(intent)
         }
     }

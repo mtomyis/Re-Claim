@@ -101,7 +101,11 @@
 
     <EditText
         android:id="@+id/ed_tglbiaya"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
+        android:inputType="datetime"
+        android:clickable="true"
+        android:cursorVisible="false"
+        android:focusable="false"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +124,7 @@
 
     <ScrollView
         android:id="@+id/id_scrolimg"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="150dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -134,14 +138,13 @@
             <ImageView
                 android:id="@+id/imageView2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:layout_height="match_parent" />
         </LinearLayout>
     </ScrollView>
 
     <Button
         android:id="@+id/btn_simpanbiaya"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8ssp"
         android:text="Simpan"

@@ -34,30 +34,7 @@ class CreateActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat("yyyy-MM-dd")
         val currentDate = sdf.format(Date())
         ed_tgl_reimburs.setText(currentDate)
-
-//        val c = Calendar.getInstance()
-//        val year = c.get(Calendar.YEAR)
-//        val month = c.get(Calendar.MONTH)
-//        val day = c.get(Calendar.DAY_OF_MONTH)
-//
-//        ed_tgl_reimburs.setOnClickListener {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                val klik = DatePickerDialog(
-//                        this,
-//                        DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-//                            ed_tgl_reimburs.setText("" + year + "-" + (month + 1) + "-" + dayOfMonth)
-//                            val newDate:Calendar =Calendar.getInstance()
-//                            newDate.set(year, (month + 1), dayOfMonth)
-//                        },
-//                        year,
-//                        month,
-//                        day
-//                )
-//                klik.show()
-//            } else {
-//                Log.d("eror version android", "wah eror")
-//            }
-//        }
+        tanggalfix=currentDate
 
         val myCalendar = Calendar.getInstance()
         val date = OnDateSetListener { view, year, month, dayOfMonth ->
@@ -76,10 +53,8 @@ class CreateActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
 
-            //Toast.makeText(LihatPengingatPadiActivity.this, "tanggal: "+ dpersem.getDate() +"/"+(dpersem.getMonth()+1) +"/"+ (dpersem.getYear()+1900), Toast.LENGTH_SHORT).show();
             tanggalfix = "" + (dpersem!!.year + 1900).toString() + "-" + (dpersem!!.month + 1).toString() + "-" + dpersem!!.date
 
-            //Toast.makeText(LihatPengingatPadiActivity.this, "tanggal: "+tanggalpersemaian, Toast.LENGTH_SHORT).show();
         }
         ed_tgl_reimburs.setOnClickListener(View.OnClickListener { DatePickerDialog(this, date, myCalendar[Calendar.YEAR], myCalendar[Calendar.MONTH], myCalendar[Calendar.DAY_OF_MONTH]).show() })
         //input tanggal b
