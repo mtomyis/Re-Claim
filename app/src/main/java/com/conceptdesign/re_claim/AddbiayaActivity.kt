@@ -151,7 +151,7 @@ class AddbiayaActivity : AppCompatActivity() {
                         keperluan.text.toString(),
                         radio.text.toString(),
                         ed_nominal.text.toString(),
-                        tanggalfix,
+                        tglreimbus.text.toString(),
                         namaimg,
                         intent.getIntExtra(MainActivity.ID,0)
                 )

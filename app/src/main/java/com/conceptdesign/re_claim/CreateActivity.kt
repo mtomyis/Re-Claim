@@ -28,6 +28,9 @@ class CreateActivity : AppCompatActivity() {
 
 //        hidden btn
         btn_tambahbiaya.visibility = View.GONE
+        idimglistbiaya.visibility = View.GONE
+        textView.visibility = View.GONE
+        scroll_list_biaya.visibility = View.GONE
 
         //input tanggal a
         // set tanggal awal hari ini
@@ -66,7 +69,7 @@ class CreateActivity : AppCompatActivity() {
 //                Log.d("reim : ", ""+namareimbus.text.toString())
                 val add_reimbursement = M_reimbusment(
                         0,
-                        tanggalfix,
+                        tglreimbus.text.toString(),
                         namareimbus.text.toString(),
                         0,
                         "0"

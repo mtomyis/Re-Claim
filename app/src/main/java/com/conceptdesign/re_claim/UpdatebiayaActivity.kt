@@ -9,7 +9,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
@@ -17,6 +16,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -28,6 +29,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.conceptdesign.re_claim.DBHelper.DBHelper
 import com.conceptdesign.re_claim.Model.M_detailReimbusment
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_addbiaya.*
 import java.io.File
 import java.io.FileNotFoundException
@@ -67,18 +69,20 @@ class UpdatebiayaActivity : AppCompatActivity() {
         val tglreimbus = findViewById(R.id.ed_tglbiaya) as EditText
         val ed_nominal = findViewById(R.id.ed_nominal) as EditText
         val imageviewnya = findViewById(R.id.imageView2) as ImageView
+        val imageviewNew = findViewById(R.id.imageViewNew) as ImageView
+
+//        sembunyikan dulu bre
+        imageViewNew.visibility = View.VISIBLE
+        imageviewnya.visibility = View.GONE
+
         keperluan.setText(intent.getStringExtra(MainActivity.KEPERLUAN)!!.toString())
         tglreimbus.setText(intent.getStringExtra(MainActivity.TANGGAL)!!.toString())
         ed_nominal.setText(intent.getStringExtra(MainActivity.NOMINAL)!!.toString())
 
         val imgFile = File(Environment.getExternalStorageDirectory().toString() + "/Reclaim/"+intent.getStringExtra(MainActivity.SRC)!!.toString())
         Log.d("selow ",intent.getStringExtra(MainActivity.SRC)!!.toString())
-//        if (imgFile.exists()) {
-//            val myBitmap: Bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
-//            imageviewnya.setImageBitmap(myBitmap)
-//        }else{
-//            imageviewnya.setImageDrawable(null)
-//        }
+        Picasso.get().load(imgFile).into(imageviewNew);
+
         if (intent.getStringExtra(MainActivity.MILIK)!!.toString()=="Uang Perusahaan"){
             R1.isChecked = true
             R2.isChecked = false
@@ -145,6 +149,7 @@ class UpdatebiayaActivity : AppCompatActivity() {
                     && !(ed_nominal.text.toString().equals(""))){
 
                 if (imageviewnya.getDrawable() != null){
+//                    jika drwable satunya tidak null maka ini, kalo tetep null maka pakai yang dahulu
                     Log.d("apaini : ", "berhasil")
                     val folder = File(Environment.getExternalStorageDirectory().toString() + "/Reclaim/")
                     var success = true
@@ -168,7 +173,7 @@ class UpdatebiayaActivity : AppCompatActivity() {
                     bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
                 }else{
                     Log.d("apaini : ", "kosong")
-                    namaimg = ""
+                    namaimg = intent.getStringExtra(MainActivity.SRC)!!.toString()
                 }
                 // Get the instance of radio button using id
                 val radio: RadioButton = findViewById(idr)
@@ -177,7 +182,7 @@ class UpdatebiayaActivity : AppCompatActivity() {
                         keperluan.text.toString(),
                         radio.text.toString(),
                         ed_nominal.text.toString(),
-                        tanggalfix,
+                        tglreimbus.text.toString(),
                         namaimg,
                         intent.getIntExtra(MainActivity.FK,0)
                 )
@@ -244,6 +249,9 @@ class UpdatebiayaActivity : AppCompatActivity() {
                                 this.contentResolver
                                 , imgUri
                         )
+//                        munculkan imagenya bre
+                        imageViewNew.visibility = View.GONE
+                        imageView2.visibility = View.VISIBLE
                         imageView2.setImageBitmap(bitmap)
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
@@ -256,6 +264,9 @@ class UpdatebiayaActivity : AppCompatActivity() {
                     val thumbnail = MediaStore.Images.Media.getBitmap(
                             this.contentResolver, imgUri
                     )
+//                    munculkan imagenya bre
+                    imageViewNew.visibility = View.GONE
+                    imageView2.visibility = View.VISIBLE
                     imageView2.setImageBitmap(thumbnail)
                     Log.d(TAG, "uri bitmap " + thumbnail.toString())
                 } catch (e: Exception) {
@@ -288,5 +299,63 @@ class UpdatebiayaActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu to use in the action bar
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_hapus_reimbus, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle presses on the action bar menu items
+        when (item.itemId) {
+            R.id.item_hapus -> {
+                hapusgak()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun hapusgak(){
+        AlertDialog.Builder(this)
+            // Judul
+//            .setTitle("")
+            // Pesan yang di tamopilkan
+            .setMessage("Hapus ?")
+            .setPositiveButton("Ya", DialogInterface.OnClickListener { dialogInterface, i ->
+                // hapus dengan id kemudian kembali
+                val add_detailReimbursment = M_detailReimbusment(
+                    intent.getIntExtra(MainActivity.ID,0),
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    0
+                )
+//                Log.d("datadetail : ", ""+add_detailReimbursment.fk)
+                db.updateDetailReimburs(add_detailReimbursment)
+//                hapus gambarnya
+                val imgFile = File(Environment.getExternalStorageDirectory().toString() + "/Reclaim/"+intent.getStringExtra(MainActivity.SRC)!!.toString())
+//                Toast.makeText(this, "Lokasi : "+imgFile.toString(), Toast.LENGTH_LONG).show()
+                imgFile.delete()
+                if(imgFile.exists()){
+                    imgFile.getCanonicalFile().delete();
+                    if(imgFile.exists()){
+                        getApplicationContext().deleteFile(imgFile.getName());
+//                        Toast.makeText(this, "Berhasil Dihapus tenan", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+                Toast.makeText(this, "Berhasil dihapus", Toast.LENGTH_LONG).show()
+                finish()
+            })
+            .setNegativeButton("Tidak", DialogInterface.OnClickListener { dialogInterface, i ->
+//                Toast.makeText(this, "Anda memilih tombol tidak", Toast.LENGTH_LONG).show()
+            })
+            .show()
     }
 }

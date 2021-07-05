@@ -1,10 +1,20 @@
 package com.conceptdesign.re_claim
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
+import android.graphics.pdf.PdfDocument.PageInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -24,16 +34,18 @@ import com.conceptdesign.re_claim.MainActivity.Companion.TANGGAL
 import com.conceptdesign.re_claim.MainActivity.Companion.TOTAL
 import com.conceptdesign.re_claim.Model.DetailReimbursment
 import com.conceptdesign.re_claim.Model.M_reimbusment
-import com.conceptdesign.re_claim.Model.Reimbursement
 import kotlinx.android.synthetic.main.activity_create.*
-import kotlinx.android.synthetic.main.activity_main.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+
 class UpdateActivity : AppCompatActivity() {
+
+    lateinit var bitmap: Bitmap
+    lateinit var scaleBitmap: Bitmap
 
     internal lateinit var db: DBHelper
     internal var lstDetailReimb:List<DetailReimbursment> = ArrayList<DetailReimbursment>()
@@ -116,7 +128,7 @@ class UpdateActivity : AppCompatActivity() {
             if (!(namareimbus.text.toString().equals("")) && !(tglreimbus.text.toString().equals(""))){
                 val edit_reimbursement = M_reimbusment(
                         intent.getIntExtra(ID,0),
-                        tanggalfix,
+                        tglreimbus.text.toString(),
                         namareimbus.text.toString(),
                         intent.getIntExtra(STATUS,0),
                         "0" //liat count db sqlite
@@ -144,4 +156,57 @@ class UpdateActivity : AppCompatActivity() {
 //        Log.d("qwqwqwqw", lstDetailReimb.get(0).nominal.toString())
         rv_list_biaya.adapter= ListMyClaimAdapterDetail(lstDetailReimb, this@UpdateActivity)
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu to use in the action bar
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_export, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle presses on the action bar menu items
+        when (item.itemId) {
+            R.id.item_hapus -> {
+                hapusgak()
+                return true
+            }
+            R.id.exportpdf -> {
+                crtPDF()
+                Toast.makeText(this, "PDF berhasil dibuat", Toast.LENGTH_LONG).show()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun hapusgak(){
+        AlertDialog.Builder(this)
+            // Judul
+//            .setTitle("")
+            // Pesan yang di tamopilkan
+            .setMessage("Hapus ?")
+            .setPositiveButton("Ya", DialogInterface.OnClickListener { dialogInterface, i ->
+                // hapus dengan id kemudian kembali
+                val del_reimbursement = M_reimbusment(
+                    intent.getIntExtra(ID,0),
+                    "",
+                    "",
+                    0,
+                    ""
+                )
+                db.deleteReimburs(del_reimbursement)
+                Toast.makeText(this, "Berhasil dihapus", Toast.LENGTH_LONG).show()
+                finish()
+            })
+            .setNegativeButton("Tidak", DialogInterface.OnClickListener { dialogInterface, i ->
+//                Toast.makeText(this, "Anda memilih tombol tidak", Toast.LENGTH_LONG).show()
+            })
+            .show()
+    }
+
+    fun crtPDF(){
+
+    }
+
 }
