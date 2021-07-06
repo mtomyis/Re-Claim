@@ -1,17 +1,17 @@
 package com.conceptdesign.re_claim
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.pdf.PdfDocument
-import android.graphics.pdf.PdfDocument.PageInfo
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -20,6 +20,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.conceptdesign.re_claim.Adapter.ListMyClaimAdapterDetail
 import com.conceptdesign.re_claim.DBHelper.DBHelper
 import com.conceptdesign.re_claim.MainActivity.Companion.FK
@@ -34,7 +35,17 @@ import com.conceptdesign.re_claim.MainActivity.Companion.TANGGAL
 import com.conceptdesign.re_claim.MainActivity.Companion.TOTAL
 import com.conceptdesign.re_claim.Model.DetailReimbursment
 import com.conceptdesign.re_claim.Model.M_reimbusment
+import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.property.TextAlignment
+import com.itextpdf.layout.property.UnitValue
 import kotlinx.android.synthetic.main.activity_create.*
+import java.io.File
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -43,6 +54,8 @@ import java.util.*
 
 
 class UpdateActivity : AppCompatActivity() {
+
+    private val STORAGE_CODE: Int = 100
 
     lateinit var bitmap: Bitmap
     lateinit var scaleBitmap: Bitmap
@@ -172,8 +185,23 @@ class UpdateActivity : AppCompatActivity() {
                 return true
             }
             R.id.exportpdf -> {
-                crtPDF()
-                Toast.makeText(this, "PDF berhasil dibuat", Toast.LENGTH_LONG).show()
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                    //system OS >= Marshmallow(6.0), check permission is enabled or not
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_DENIED){
+                        //permission was not granted, request it
+                        val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        requestPermissions(permissions, STORAGE_CODE)
+                    }
+                    else{
+                        //permission already granted, call savePdf() method
+                        crtPDF()
+                    }
+                }
+                else{
+                    //system OS < marshmallow, call savePdf() method
+                    crtPDF()
+                }
                 return true
             }
         }
@@ -206,7 +234,99 @@ class UpdateActivity : AppCompatActivity() {
     }
 
     fun crtPDF(){
+        val folder = File(Environment.getExternalStorageDirectory().toString() + "/Reclaim/Pdf/")
+        var success = true
+        if (!folder.exists()) {
+            success = folder.mkdir()
+        }
+        if (success) {
+            // Do something on success
+            Log.d("datadetail : ", "Folder Pdf berhasil dibuat")
+        } else {
+            // Do something else on failure
+            Log.d("datadetail : ", "Folder Pdf gagal dibuat")
+        }
+        //create object of Document class
+        val mFileName = "Judul Klaim"+SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())
+        //pdf file path
+        val mFilePath = Environment.getExternalStorageDirectory().toString() + "/Reclaim/Pdf/" + mFileName +".pdf"
 
+        val pdfDocument = PdfDocument(PdfWriter(mFilePath))
+        pdfDocument.defaultPageSize = PageSize.A4
+        val document = Document(pdfDocument)
+//        coba buat table
+        val table = Table(UnitValue.createPercentArray(floatArrayOf(8f, 23f, 15f, 15f, 12f, 12f, 15f))).useAllAvailableWidth()
+
+//Add Header Cells
+        table.addHeaderCell(Cell().add(Paragraph("Date").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Job Name").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Job Size").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Job Type").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Quantity").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Rate").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Amount").setTextAlignment(TextAlignment.CENTER)))
+
+//        for (entry in entries) {
+//            table.addCell(Cell().add(Paragraph(shortDateFormat.format(entry.createdOn)).setTextAlignment(TextAlignment.CENTER)))
+//            table.addCell(entry.getJobName())
+//            table.addCell(Cell().add(Paragraph(entry.jobSize).setTextAlignment(TextAlignment.CENTER)))
+//            table.addCell(Cell().add(Paragraph(entry.getJobType().replace("Pouch", "")).setTextAlignment(TextAlignment.CENTER)))
+//            table.addCell(Cell().add(Paragraph(entry.quantity).setTextAlignment(TextAlignment.CENTER)))
+//            table.addCell(Cell().add(Paragraph(entry.rate).setTextAlignment(TextAlignment.CENTER)))
+//            table.addCell(Cell().add(Paragraph(entry.amount).setTextAlignment(TextAlignment.RIGHT)))
+//        }
+        table.addCell(Cell().add(Paragraph("shortDateFormat.format(entry.createdOn)").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell("entry.getJobName()")
+        table.addCell(Cell().add(Paragraph("entry.jobSize").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell(Cell().add(Paragraph("entry.getJobType().").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell(Cell().add(Paragraph("entry.quantity").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell(Cell().add(Paragraph("entry.rate").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell(Cell().add(Paragraph("entry.amount").setTextAlignment(TextAlignment.RIGHT)))
+        document.add(table)
+
+        val textWithoutSpace1 = Paragraph("My Text")
+        textWithoutSpace1.setMargins(10f, 10f, 10f, 10f)
+        document.add(textWithoutSpace1)
+
+        val textWithSpace = Paragraph("My Spaced Text")
+        textWithSpace.setMargins(10f, 10f, 10f, 10f)
+        document.add(textWithSpace)
+
+        val textWithoutSpace2 = Paragraph("My Text")
+        textWithoutSpace2.setMargins(10f, 10f, 10f, 10f)
+        document.add(textWithoutSpace2)
+        document.close()
+
+        Toast.makeText(this, "PDF berhasil dibuat", Toast.LENGTH_LONG).show()
+//        buka filenya
+        val file = File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reclaim/Pdf/" + mFileName +".pdf")
+        val target = Intent(Intent.ACTION_VIEW)
+        val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file)
+        target.setDataAndType(uri, "application/pdf")
+        target.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+        target.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val intent = Intent.createChooser(target, "Open File")
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            // Instruct the user to install a PDF reader here, or something
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode){
+            STORAGE_CODE -> {
+                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //permission from popup was granted, call savePdf() method
+                    crtPDF()
+                }
+                else{
+                    //permission from popup was denied, show error message
+                    Toast.makeText(this, "Permission denied...!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
 }
