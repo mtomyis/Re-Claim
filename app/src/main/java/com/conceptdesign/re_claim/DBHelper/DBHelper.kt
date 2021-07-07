@@ -21,6 +21,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         private val COL_TGL_REIMBURS = "tanggal"
         private val COL_STATUS_REIMBURS = "status"
         private val COL_TOTAL = "total"
+        private val COL_SALDO = "saldo"
 
         //table detail_reimbust
         private val TABLE_DETAIL = "detail"
@@ -36,16 +37,16 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
 
     override fun onCreate(db: SQLiteDatabase?) {
         val CREATE_TABLE_REIMBUS = ("CREATE TABLE $TABLE_REIMBURS ($COL_ID_REIMBURS INTEGER PRIMARY KEY AUTOINCREMENT, $COL_NAME_REIMBURS TEXT, " +
-                "$COL_TGL_REIMBURS DATETIME, $COL_TOTAL text, $COL_STATUS_REIMBURS INTEGER)")
+                "$COL_TGL_REIMBURS DATETIME, $COL_TOTAL text, $COL_STATUS_REIMBURS INTEGER, $COL_SALDO text)")
         db!!.execSQL(CREATE_TABLE_REIMBUS)
 
         val CREATE_TABLE_DETAIL = ("CREATE TABLE $TABLE_DETAIL ($COL_ID_DETAIL INTEGER PRIMARY KEY AUTOINCREMENT, $COL_KEPERLUAN_DETAIL TEXT," +
                 "$COL_MILIK_DETAIL TEXT, $COL_NOMINAL_DETAIL TEXT, $COL_TANGGAL_DETAIL DATETIME, $COL_SRC_DETAIL text, $COL_FK_REIMBURS INTEGER)")
         db!!.execSQL(CREATE_TABLE_DETAIL)
 
-        val INSERT_TABLE_REIMBUS = ("INSERT INTO $TABLE_REIMBURS($COL_ID_REIMBURS,$COL_NAME_REIMBURS,$COL_TGL_REIMBURS,$COL_TOTAL,$COL_STATUS_REIMBURS) "+
-                "VALUES (1,'Perjalanan Banyuwangi','2021-06-25', '230000',0)," +
-                "(2,'Perjalanan Jakarta','2021-06-29', '350000',1)")
+        val INSERT_TABLE_REIMBUS = ("INSERT INTO $TABLE_REIMBURS($COL_ID_REIMBURS,$COL_NAME_REIMBURS,$COL_TGL_REIMBURS,$COL_TOTAL,$COL_STATUS_REIMBURS,$COL_SALDO) "+
+                "VALUES (1,'Perjalanan Banyuwangi','2021-06-25', '230000',0,'200000')," +
+                "(2,'Perjalanan Jakarta','2021-06-29', '350000',1,'320000')")
         db!!.execSQL(INSERT_TABLE_REIMBUS)
 
         val INSERT_TABLE_DETAIL = ("INSERT INTO $TABLE_DETAIL($COL_ID_DETAIL,$COL_KEPERLUAN_DETAIL,$COL_MILIK_DETAIL,$COL_NOMINAL_DETAIL,$COL_TANGGAL_DETAIL,$COL_SRC_DETAIL,$COL_FK_REIMBURS) "+
@@ -77,6 +78,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
                     reimbursement.tgl = cursor.getString(cursor.getColumnIndex(COL_TGL_REIMBURS))
                     reimbursement.total = cursor.getString(cursor.getColumnIndex(COL_TOTAL))
                     reimbursement.status = cursor.getInt(cursor.getColumnIndex(COL_STATUS_REIMBURS))
+                    reimbursement.saldo = cursor.getString(cursor.getColumnIndex(COL_SALDO))
 
                     lstReimburs.add(reimbursement)
                 }while (cursor.moveToNext())
@@ -93,6 +95,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         values.put(COL_TGL_REIMBURS,reimbursement.tgl)
         values.put(COL_TOTAL,reimbursement.total)
         values.put(COL_STATUS_REIMBURS,reimbursement.status)
+        values.put(COL_SALDO,reimbursement.saldo)
         db.insert(TABLE_REIMBURS,null,values)
         db.close()
     }
@@ -106,6 +109,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         values.put(COL_TGL_REIMBURS,reimbursement.tgl)
         values.put(COL_TOTAL,reimbursement.total)
         values.put(COL_STATUS_REIMBURS,reimbursement.status)
+        values.put(COL_SALDO,reimbursement.saldo)
 
         return db.update(TABLE_REIMBURS, values,"$COL_ID_REIMBURS=?", arrayOf(reimbursement.id.toString()))
     }

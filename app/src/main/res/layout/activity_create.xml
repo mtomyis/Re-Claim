@@ -72,6 +72,36 @@
         app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
     <TextView
+        android:id="@+id/textView15saldo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/latoregular"
+        android:text="Saldo Awal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ed_nama_reimburse" />
+
+    <ImageView
+        android:id="@+id/imageView11saldo"
+        android:layout_width="@dimen/_24ssp"
+        android:layout_height="@dimen/_24ssp"
+        android:layout_marginTop="@dimen/_35ssp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_baseline_insert_drive_file_24"
+        app:layout_constraintEnd_toStartOf="@+id/textView15saldo"
+        app:layout_constraintTop_toBottomOf="@+id/imageView11" />
+
+    <EditText
+        android:id="@+id/ed_saldo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="@dimen/_5ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView15saldo" />
+
+    <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,7 +110,7 @@
         android:fontFamily="@font/latoregular"
         android:text="List Biaya"
         app:layout_constraintStart_toEndOf="@+id/idimglistbiaya"
-        app:layout_constraintTop_toBottomOf="@+id/ed_nama_reimburse" />
+        app:layout_constraintTop_toBottomOf="@+id/ed_saldo" />
 
     <ImageView
         android:id="@+id/idimglistbiaya"
@@ -89,7 +119,7 @@
         android:layout_marginTop="@dimen/_25ssp"
         android:src="@drawable/ic_baseline_list_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView11" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView11saldo" />
 
     <Button
         android:id="@+id/btn_tambahbiaya"
@@ -100,13 +130,13 @@
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/scroll_list_biaya"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ed_nama_reimburse" />
+        app:layout_constraintTop_toBottomOf="@+id/ed_saldo" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scroll_list_biaya"
-        android:layout_marginTop="195dp">
+        android:layout_marginTop="280dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

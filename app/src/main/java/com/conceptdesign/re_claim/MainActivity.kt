@@ -21,15 +21,14 @@ class MainActivity : AppCompatActivity() {
         val TANGGAL: String = "TANGGAL"
         val TOTAL: String = "TOTAL"
         val STATUS: String = "STATUS"
+        val SALDO: String = "SALDO"
 
         val KEPERLUAN: String = "KEPERLUAN"
         val MILIK: String = "MILIK"
         val NOMINAL: String = "NOMINAL"
         val SRC: String = "SRC"
         val FK: String = "FK"
-
     }
-
 
     override fun onStart() {
         tampilkanData()
@@ -45,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra(TANGGAL, get?.tgl)
         intent.putExtra(TOTAL, get?.total)
         intent.putExtra(STATUS, get?.status)
+        intent.putExtra(SALDO, get?.saldo)
         startActivity(intent)
     }
 

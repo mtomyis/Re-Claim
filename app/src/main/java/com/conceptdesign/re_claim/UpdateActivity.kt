@@ -8,7 +8,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -29,19 +28,21 @@ import com.conceptdesign.re_claim.MainActivity.Companion.KEPERLUAN
 import com.conceptdesign.re_claim.MainActivity.Companion.MILIK
 import com.conceptdesign.re_claim.MainActivity.Companion.NOMINAL
 import com.conceptdesign.re_claim.MainActivity.Companion.REIMBUST
+import com.conceptdesign.re_claim.MainActivity.Companion.SALDO
 import com.conceptdesign.re_claim.MainActivity.Companion.SRC
 import com.conceptdesign.re_claim.MainActivity.Companion.STATUS
 import com.conceptdesign.re_claim.MainActivity.Companion.TANGGAL
 import com.conceptdesign.re_claim.MainActivity.Companion.TOTAL
 import com.conceptdesign.re_claim.Model.DetailReimbursment
 import com.conceptdesign.re_claim.Model.M_reimbusment
+import com.itextpdf.io.image.ImageData
+import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
-import com.itextpdf.layout.element.Cell
-import com.itextpdf.layout.element.Paragraph
-import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.element.*
 import com.itextpdf.layout.property.TextAlignment
 import com.itextpdf.layout.property.UnitValue
 import kotlinx.android.synthetic.main.activity_create.*
@@ -94,9 +95,11 @@ class UpdateActivity : AppCompatActivity() {
 //
         val namareimbus = findViewById(R.id.ed_nama_reimburse) as EditText
         val tglreimbus = findViewById(R.id.ed_tgl_reimburs) as EditText
+        val edsaldo = findViewById(R.id.ed_saldo) as EditText
 
         namareimbus.setText(intent.getStringExtra(REIMBUST)!!.toString())
         id_total_reimbus.setText(intent.getStringExtra(TOTAL)!!.toString())
+        edsaldo.setText(intent.getStringExtra(SALDO)!!.toString())
 
 //        hidden btn
         btn_simpan_reimburs.visibility = View.GONE
@@ -138,14 +141,15 @@ class UpdateActivity : AppCompatActivity() {
         db = DBHelper(this)
         //event
         btn_edit_reimburs.setOnClickListener {
-            if (!(namareimbus.text.toString().equals("")) && !(tglreimbus.text.toString().equals(""))){
+            if (!(namareimbus.text.toString().equals("")) && !(tglreimbus.text.toString().equals("")) && !(ed_saldo.text.toString().equals(""))){
                 val edit_reimbursement = M_reimbusment(
                         intent.getIntExtra(ID,0),
                         tglreimbus.text.toString(),
                         namareimbus.text.toString(),
                         intent.getIntExtra(STATUS,0),
-                        "0" //liat count db sqlite
-                )
+                        "0", //liat count db sqlite
+                        edsaldo.text.toString()
+                        )
                 Log.d("reim : ", ""+edit_reimbursement.reimburs)
                 db.updateReimburs(edit_reimbursement)
                 Toast.makeText(this, "Berhasil Tersimpan", Toast.LENGTH_LONG).show()
@@ -221,6 +225,7 @@ class UpdateActivity : AppCompatActivity() {
                     "",
                     "",
                     0,
+                    "",
                     ""
                 )
                 db.deleteReimburs(del_reimbursement)
@@ -247,24 +252,49 @@ class UpdateActivity : AppCompatActivity() {
             Log.d("datadetail : ", "Folder Pdf gagal dibuat")
         }
         //create object of Document class
-        val mFileName = "Judul Klaim"+SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())
+        val mFileName = "Judul Klaim-"+SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())
         //pdf file path
         val mFilePath = Environment.getExternalStorageDirectory().toString() + "/Reclaim/Pdf/" + mFileName +".pdf"
 
         val pdfDocument = PdfDocument(PdfWriter(mFilePath))
         pdfDocument.defaultPageSize = PageSize.A4
         val document = Document(pdfDocument)
-//        coba buat table
-        val table = Table(UnitValue.createPercentArray(floatArrayOf(8f, 23f, 15f, 15f, 12f, 12f, 15f))).useAllAvailableWidth()
 
-//Add Header Cells
-        table.addHeaderCell(Cell().add(Paragraph("Date").setTextAlignment(TextAlignment.CENTER)))
-        table.addHeaderCell(Cell().add(Paragraph("Job Name").setTextAlignment(TextAlignment.CENTER)))
-        table.addHeaderCell(Cell().add(Paragraph("Job Size").setTextAlignment(TextAlignment.CENTER)))
-        table.addHeaderCell(Cell().add(Paragraph("Job Type").setTextAlignment(TextAlignment.CENTER)))
-        table.addHeaderCell(Cell().add(Paragraph("Quantity").setTextAlignment(TextAlignment.CENTER)))
-        table.addHeaderCell(Cell().add(Paragraph("Rate").setTextAlignment(TextAlignment.CENTER)))
-        table.addHeaderCell(Cell().add(Paragraph("Amount").setTextAlignment(TextAlignment.CENTER)))
+//        buat judulnya
+        val judulKlaim = Paragraph("Judul Claim")
+        judulKlaim.setTextAlignment(TextAlignment.CENTER)
+        judulKlaim.setFontSize(12f)
+        judulKlaim.setBold()
+        document.add(judulKlaim)
+
+//        buat detailnya
+        val tabledetail = Table(UnitValue.createPercentArray(floatArrayOf(2f, 0f, 3f)))
+        tabledetail.setFontSize(9f)
+
+        tabledetail.addCell(Cell().add(Paragraph("Nama").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph(":").setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph("Username").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph("Reimbursement").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph(":").setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph("Judul reimbursement").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph("Tanggal").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph(":").setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph("03/03/2021").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph("Saldo Awal").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph(":").setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph("Rp. 650.000").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        document.add(tabledetail)
+
+//        coba buat table
+        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 60f, 37f, 1f))).useAllAvailableWidth()
+        table.setMarginTop(10f)
+        table.setFontSize(9f)
+        //Add Header Cells
+        table.addHeaderCell(Cell().add(Paragraph("No.").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Tanggal").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Keperluan").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Nominal").setTextAlignment(TextAlignment.CENTER)))
+        table.addHeaderCell(Cell().add(Paragraph("Uang Milik").setTextAlignment(TextAlignment.CENTER)))
 
 //        for (entry in entries) {
 //            table.addCell(Cell().add(Paragraph(shortDateFormat.format(entry.createdOn)).setTextAlignment(TextAlignment.CENTER)))
@@ -275,26 +305,76 @@ class UpdateActivity : AppCompatActivity() {
 //            table.addCell(Cell().add(Paragraph(entry.rate).setTextAlignment(TextAlignment.CENTER)))
 //            table.addCell(Cell().add(Paragraph(entry.amount).setTextAlignment(TextAlignment.RIGHT)))
 //        }
-        table.addCell(Cell().add(Paragraph("shortDateFormat.format(entry.createdOn)").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell("entry.getJobName()")
-        table.addCell(Cell().add(Paragraph("entry.jobSize").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell(Cell().add(Paragraph("entry.getJobType().").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell(Cell().add(Paragraph("entry.quantity").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell(Cell().add(Paragraph("entry.rate").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell(Cell().add(Paragraph("entry.amount").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph("1.").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell(Cell().add(Paragraph("03/03/2021").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell(Cell().add(Paragraph("Membeli Materai 4 dan juga bla bla bla").setTextAlignment(TextAlignment.LEFT)))
+        table.addCell(Cell().add(Paragraph("30.000").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph("Perusahaan").setTextAlignment(TextAlignment.CENTER)))
+
+        table.addCell(Cell().add(Paragraph("2.").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell(Cell().add(Paragraph("03/03/2021").setTextAlignment(TextAlignment.CENTER)))
+        table.addCell(Cell().add(Paragraph("Membeli Materai").setTextAlignment(TextAlignment.LEFT)))
+        table.addCell(Cell().add(Paragraph("30.000").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph("Perusahaan").setTextAlignment(TextAlignment.CENTER)))
+
+        table.addCell(Cell(1,3).add(Paragraph("Total dikeluarkan").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph("60.000").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell(3,1).add(Paragraph("").setTextAlignment(TextAlignment.CENTER)))
+
+        table.addCell(Cell(1,3).add(Paragraph("Saldo awal").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph("60.000").setTextAlignment(TextAlignment.RIGHT)))
+
+        table.addCell(Cell(1,3).add(Paragraph("Sisa").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph("0").setTextAlignment(TextAlignment.RIGHT)))
+
         document.add(table)
 
-        val textWithoutSpace1 = Paragraph("My Text")
-        textWithoutSpace1.setMargins(10f, 10f, 10f, 10f)
-        document.add(textWithoutSpace1)
+        document.add(AreaBreak())
 
-        val textWithSpace = Paragraph("My Spaced Text")
-        textWithSpace.setMargins(10f, 10f, 10f, 10f)
-        document.add(textWithSpace)
+        //        buat judulnya
+        val juduldokumentasi = Paragraph("Dokumentasi")
+        juduldokumentasi.setTextAlignment(TextAlignment.CENTER)
+        juduldokumentasi.setFontSize(12f)
+        juduldokumentasi.setBold()
+        document.add(juduldokumentasi)
 
-        val textWithoutSpace2 = Paragraph("My Text")
-        textWithoutSpace2.setMargins(10f, 10f, 10f, 10f)
-        document.add(textWithoutSpace2)
+        val tablegambar = Table(UnitValue.createPercentArray(floatArrayOf(1f, 29f))).useAllAvailableWidth()
+        tablegambar.setMarginTop(10f)
+        tablegambar.setFontSize(9f)
+
+        tablegambar.addCell(Cell().add(Paragraph("1").setTextAlignment(TextAlignment.CENTER)))
+        tablegambar.addCell(Cell().add(Paragraph("Membeli Materai 4 dan juga bla bla bla").setTextAlignment(TextAlignment.LEFT)))
+        val cellgambar = Cell(1,2)
+        cellgambar.setTextAlignment(TextAlignment.CENTER)
+        cellgambar.setPadding(5f)
+        val imageFile = Environment.getExternalStorageDirectory().toString() + "/Reclaim/1625470348398.jpg"
+        val data: ImageData = ImageDataFactory.create(imageFile)
+        val img = Image(data)
+        cellgambar.add(img.setWidth(200f))
+        tablegambar.addCell(cellgambar)
+        tablegambar.addCell(Cell(1,2).add(Paragraph("").setTextAlignment(TextAlignment.CENTER)))
+
+//        tablegambar.addCell(Cell().add(Paragraph("2").setTextAlignment(TextAlignment.CENTER)))
+//        tablegambar.addCell(Cell().add(Paragraph("Membeli Materai").setTextAlignment(TextAlignment.LEFT)))
+//        val cellgambar2 = Cell(1,2)
+//        cellgambar2.setTextAlignment(TextAlignment.CENTER)
+//        cellgambar2.setPadding(5f)
+//        val imageFile2 = Environment.getExternalStorageDirectory().toString() + "/Reclaim/1625470348398.jpg"
+//        val data2: ImageData = ImageDataFactory.create(imageFile2)
+//        val img2 = Image(data2)
+//        cellgambar2.add(img2.setWidth(200f))
+//        tablegambar.addCell(cellgambar2)
+//        tablegambar.addCell(Cell(1,2).add(Paragraph("").setTextAlignment(TextAlignment.CENTER)))
+
+//        tablegambar.addCell(Cell(1,2).add(Paragraph("").setTextAlignment(TextAlignment.CENTER)))
+        document.add(tablegambar)
+//        val textWithSpace = Paragraph("My Spaced Text")
+//        textWithSpace.setMargins(10f, 10f, 10f, 10f)
+//        document.add(textWithSpace)
+//
+//        val textWithoutSpace2 = Paragraph("My Text")
+//        textWithoutSpace2.setMargins(10f, 10f, 10f, 10f)
+//        document.add(textWithoutSpace2)
         document.close()
 
         Toast.makeText(this, "PDF berhasil dibuat", Toast.LENGTH_LONG).show()

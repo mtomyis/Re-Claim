@@ -25,6 +25,7 @@ class CreateActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create)
         val namareimbus = findViewById(R.id.ed_nama_reimburse) as EditText
         val tglreimbus = findViewById(R.id.ed_tgl_reimburs) as EditText
+        val edsaldo = findViewById(R.id.ed_saldo) as EditText
 
 //        hidden btn
         btn_tambahbiaya.visibility = View.GONE
@@ -65,14 +66,15 @@ class CreateActivity : AppCompatActivity() {
         db = DBHelper(this)
         //event
         btn_simpan_reimburs.setOnClickListener {
-            if (!(namareimbus.text.toString().equals("")) && !(tglreimbus.text.toString().equals(""))){
+            if (!(namareimbus.text.toString().equals("")) && !(tglreimbus.text.toString().equals("")) && !(ed_saldo.text.toString().equals(""))){
 //                Log.d("reim : ", ""+namareimbus.text.toString())
                 val add_reimbursement = M_reimbusment(
                         0,
                         tglreimbus.text.toString(),
                         namareimbus.text.toString(),
                         0,
-                        "0"
+                        "0",
+                        edsaldo.text.toString()
                 )
 //                Log.d("reim : ", ""+add_reimbursement.reimburs)
                 db.addReimburs(add_reimbursement)
