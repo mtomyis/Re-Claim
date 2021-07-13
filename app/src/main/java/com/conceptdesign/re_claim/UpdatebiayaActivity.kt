@@ -83,7 +83,7 @@ class UpdatebiayaActivity : AppCompatActivity() {
         Log.d("selow ",intent.getStringExtra(MainActivity.SRC)!!.toString())
         Picasso.get().load(imgFile).into(imageviewNew);
 
-        if (intent.getStringExtra(MainActivity.MILIK)!!.toString()=="Uang Perusahaan"){
+        if (intent.getStringExtra(MainActivity.MILIK)!!.toString()=="Perusahaan"){
             R1.isChecked = true
             R2.isChecked = false
         }else{
@@ -188,12 +188,12 @@ class UpdatebiayaActivity : AppCompatActivity() {
                 )
 //                Log.d("datadetail : ", ""+add_detailReimbursment.fk)
                 db.updateDetailReimburs(add_detailReimbursment)
-                Toast.makeText(this, "Berhasil Tersimpan", Toast.LENGTH_LONG).show()
-//                keperluan.getText().clear()
-//                ed_nominal.getText().clear()
-//                tglreimbus.getText().clear()
-//                src set clear
-//                Toast.makeText(applicationContext,"On button click :" +" ${radio.text}",Toast.LENGTH_SHORT).show()
+                //                jumlah semua pengeluaran
+                db.updateNilai(intent.getIntExtra(MainActivity.FK,0))
+//                trus save
+//                bersihkan field
+                Toast.makeText(this, "Perubahan Tersimpan", Toast.LENGTH_LONG).show()
+//                finish()
             }else{
                 // If no radio button checked in this radio group
                 Toast.makeText(applicationContext,"Data Belum Lengkap",
@@ -327,7 +327,7 @@ class UpdatebiayaActivity : AppCompatActivity() {
             .setMessage("Hapus ?")
             .setPositiveButton("Ya", DialogInterface.OnClickListener { dialogInterface, i ->
                 // hapus dengan id kemudian kembali
-                val add_detailReimbursment = M_detailReimbusment(
+                val detailReimbursment = M_detailReimbusment(
                     intent.getIntExtra(MainActivity.ID,0),
                     "",
                     "",
@@ -337,7 +337,8 @@ class UpdatebiayaActivity : AppCompatActivity() {
                     0
                 )
 //                Log.d("datadetail : ", ""+add_detailReimbursment.fk)
-                db.updateDetailReimburs(add_detailReimbursment)
+                db.deleteDetailReimburs(detailReimbursment)
+                db.updateNilai(intent.getIntExtra(MainActivity.FK,0))
 //                hapus gambarnya
                 val imgFile = File(Environment.getExternalStorageDirectory().toString() + "/Reclaim/"+intent.getStringExtra(MainActivity.SRC)!!.toString())
 //                Toast.makeText(this, "Lokasi : "+imgFile.toString(), Toast.LENGTH_LONG).show()

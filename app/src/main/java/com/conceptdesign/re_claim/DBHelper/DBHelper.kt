@@ -33,6 +33,11 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         private val COL_SRC_DETAIL = "src"
         private val COL_FK_REIMBURS = "fk_reimburs"
 
+        //table username
+        private val TABLE_USERNAME = "username"
+        private val COL_ID_USERNAME = "id"
+        private val COL_USERNAME = "nama"
+
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -44,16 +49,23 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
                 "$COL_MILIK_DETAIL TEXT, $COL_NOMINAL_DETAIL TEXT, $COL_TANGGAL_DETAIL DATETIME, $COL_SRC_DETAIL text, $COL_FK_REIMBURS INTEGER)")
         db!!.execSQL(CREATE_TABLE_DETAIL)
 
-        val INSERT_TABLE_REIMBUS = ("INSERT INTO $TABLE_REIMBURS($COL_ID_REIMBURS,$COL_NAME_REIMBURS,$COL_TGL_REIMBURS,$COL_TOTAL,$COL_STATUS_REIMBURS,$COL_SALDO) "+
-                "VALUES (1,'Perjalanan Banyuwangi','2021-06-25', '230000',0,'200000')," +
-                "(2,'Perjalanan Jakarta','2021-06-29', '350000',1,'320000')")
-        db!!.execSQL(INSERT_TABLE_REIMBUS)
+        val CREATE_TABLE_USERNAME = ("CREATE TABLE $TABLE_USERNAME($COL_ID_USERNAME INTEGER PRIMARY KEY AUTOINCREMENT, $COL_USERNAME TEXT)")
+        db!!.execSQL(CREATE_TABLE_USERNAME)
 
-        val INSERT_TABLE_DETAIL = ("INSERT INTO $TABLE_DETAIL($COL_ID_DETAIL,$COL_KEPERLUAN_DETAIL,$COL_MILIK_DETAIL,$COL_NOMINAL_DETAIL,$COL_TANGGAL_DETAIL,$COL_SRC_DETAIL,$COL_FK_REIMBURS) "+
-                "VALUES (1, 'Beli Bensin Mobil', 'Uang Pribadi', '150000', '2021-06-25', 'img_02984234.jpg', 1)," +
-                "(2, 'Beli Bensin Mobil lagi', 'Uang Pribadi', '150000', '2021-06-25', 'img_02984234.jpg', 1)," +
-                "(3, 'Beli Bensin Mobil dong', 'Uang Pribadi', '150000', '2021-06-29', 'img_02984234.jpg', 2)")
-        db!!.execSQL(INSERT_TABLE_DETAIL)
+        val INSERT_TABLE_USERNAME = ("INSERT INTO $TABLE_USERNAME($COL_ID_USERNAME,$COL_USERNAME) "+
+                "VALUES (1,'Username')")
+        db!!.execSQL(INSERT_TABLE_USERNAME)
+
+//        val INSERT_TABLE_REIMBUS = ("INSERT INTO $TABLE_REIMBURS($COL_ID_REIMBURS,$COL_NAME_REIMBURS,$COL_TGL_REIMBURS,$COL_TOTAL,$COL_STATUS_REIMBURS,$COL_SALDO) "+
+//                "VALUES (1,'Perjalanan Banyuwangi','2021-06-25', '230000',0,'200000')," +
+//                "(2,'Perjalanan Jakarta','2021-06-29', '350000',1,'320000')")
+//        db!!.execSQL(INSERT_TABLE_REIMBUS)
+//
+//        val INSERT_TABLE_DETAIL = ("INSERT INTO $TABLE_DETAIL($COL_ID_DETAIL,$COL_KEPERLUAN_DETAIL,$COL_MILIK_DETAIL,$COL_NOMINAL_DETAIL,$COL_TANGGAL_DETAIL,$COL_SRC_DETAIL,$COL_FK_REIMBURS) "+
+//                "VALUES (1, 'Beli Bensin Mobil', 'Uang Pribadi', '150000', '2021-06-25', 'img_02984234.jpg', 1)," +
+//                "(2, 'Beli Bensin Mobil lagi', 'Uang Pribadi', '150000', '2021-06-25', 'img_02984234.jpg', 1)," +
+//                "(3, 'Beli Bensin Mobil dong', 'Uang Pribadi', '150000', '2021-06-29', 'img_02984234.jpg', 2)")
+//        db!!.execSQL(INSERT_TABLE_DETAIL)
 
     }
 
@@ -107,7 +119,7 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         values.put(COL_ID_REIMBURS,reimbursement.id)
         values.put(COL_NAME_REIMBURS,reimbursement.reimburs)
         values.put(COL_TGL_REIMBURS,reimbursement.tgl)
-        values.put(COL_TOTAL,reimbursement.total)
+//        values.put(COL_TOTAL,reimbursement.total)
         values.put(COL_STATUS_REIMBURS,reimbursement.status)
         values.put(COL_SALDO,reimbursement.saldo)
 
@@ -121,50 +133,31 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         db.close()
     }
 
-    val getOneReimburs: Reimbursement
-        get() {
-            val reimbursement = Reimbursement()
-            val selectQuery = "SELECT*FROM $TABLE_REIMBURS ORDER BY $COL_ID_REIMBURS DESC LIMIT 1"
-            val db = this.writableDatabase
-            val cursor = db.rawQuery(selectQuery,null)
-            if (cursor.moveToFirst())
-            {
-                    reimbursement.id = cursor.getInt(cursor.getColumnIndex(COL_ID_REIMBURS))
-                    reimbursement.reimburs = cursor.getString(cursor.getColumnIndex(COL_NAME_REIMBURS))
-                    reimbursement.tgl = cursor.getString(cursor.getColumnIndex(COL_TGL_REIMBURS))
-                    reimbursement.total = cursor.getString(cursor.getColumnIndex(COL_TOTAL))
-                    reimbursement.status = cursor.getInt(cursor.getColumnIndex(COL_STATUS_REIMBURS))
-            }
-            db.close()
-            return reimbursement
+    fun getOneReimburs(idReimbus: Int): ArrayList<Reimbursement> {
+        val lstReimbursement = ArrayList<Reimbursement>()
+        val selectQuery = "SELECT*FROM $TABLE_REIMBURS WHERE $COL_ID_REIMBURS = $idReimbus"
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(selectQuery,null)
+        if (cursor.moveToFirst())
+        {
+            do {
+                val reimbursement = Reimbursement()
+                reimbursement.id = cursor.getInt(cursor.getColumnIndex(COL_ID_REIMBURS))
+                reimbursement.reimburs = cursor.getString(cursor.getColumnIndex(COL_NAME_REIMBURS))
+                reimbursement.tgl = cursor.getString(cursor.getColumnIndex(COL_TGL_REIMBURS))
+                reimbursement.total = cursor.getString(cursor.getColumnIndex(COL_TOTAL))
+                reimbursement.saldo = cursor.getString(cursor.getColumnIndex(COL_SALDO))
+                reimbursement.status = cursor.getInt(cursor.getColumnIndex(COL_STATUS_REIMBURS))
+
+                lstReimbursement.add(reimbursement)
+            }while (cursor.moveToNext())
         }
+        db.close()
+        return lstReimbursement
+    }
     //CRUD Reimbusment b
 
     //CRUD DetailReimbusment a
-    val allDetailReimbursh:List<DetailReimbursment>
-        get() {
-            val lstDetailReimburs = ArrayList<DetailReimbursment>()
-            val selectQuery = "SELECT*FROM $TABLE_DETAIL WHERE $COL_FK_REIMBURS = 1"
-            val db = this.writableDatabase
-            val cursor = db.rawQuery(selectQuery,null)
-            if (cursor.moveToFirst())
-            {
-                do {
-                    val detail_reimbursement = DetailReimbursment()
-                    detail_reimbursement. id = cursor.getInt(cursor.getColumnIndex(COL_ID_DETAIL))
-                    detail_reimbursement.keperluan = cursor.getString(cursor.getColumnIndex(COL_KEPERLUAN_DETAIL))
-                    detail_reimbursement.milik = cursor.getString(cursor.getColumnIndex(COL_MILIK_DETAIL))
-                    detail_reimbursement.nominal = cursor.getString(cursor.getColumnIndex(COL_NOMINAL_DETAIL))
-                    detail_reimbursement.tgl = cursor.getString(cursor.getColumnIndex(COL_TANGGAL_DETAIL))
-                    detail_reimbursement.src = cursor.getString(cursor.getColumnIndex(COL_SRC_DETAIL))
-                    detail_reimbursement.fk = cursor.getInt(cursor.getColumnIndex(COL_FK_REIMBURS))
-                    lstDetailReimburs.add(detail_reimbursement)
-                }while (cursor.moveToNext())
-            }
-            db.close()
-            return lstDetailReimburs
-        }
-
     fun allDetailReimburs(idReimbus: Int): ArrayList<DetailReimbursment> {
         val lstDetailReimburs = ArrayList<DetailReimbursment>()
         val selectQuery = "SELECT*FROM $TABLE_DETAIL WHERE $COL_FK_REIMBURS = $idReimbus"
@@ -223,5 +216,55 @@ class DBHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,null,DATA
         db.delete(TABLE_DETAIL,"$COL_ID_DETAIL=?", arrayOf(detail_reimbursement.id.toString()))
         db.close()
     }
+
+    fun updateNilai(idReimbus: Int)
+    {
+//        UPDATE 'tblTags'
+//        SET 'tagUsageCount' =
+//        (SELECT COUNT(*) FROM 'tblTagLinks'
+//        WHERE 'tblTagLinks'.'TLTagId' = 'tblTags'.'tagId')
+        val db = this.writableDatabase
+        val updatetotal = ("UPDATE $TABLE_REIMBURS SET $COL_TOTAL = (SELECT COALESCE(SUM($COL_NOMINAL_DETAIL)" +
+                ",0) FROM $TABLE_DETAIL WHERE $COL_FK_REIMBURS = $idReimbus) WHERE $COL_ID_REIMBURS = $idReimbus")
+        db!!.execSQL(updatetotal)
+        db.close()
+    }
+
+    fun ambilNilai(idReimbus: Int): String {
+        var totalnya:String = "0"
+        val db = this.writableDatabase
+        val ambiltotal = ("SELECT $COL_TOTAL FROM $TABLE_REIMBURS WHERE $COL_ID_REIMBURS = $idReimbus")
+        val cursor = db.rawQuery(ambiltotal,null)
+//        if (cursor.moveToFirst())
+//        {
+            cursor.moveToFirst()
+            cursor.moveToPosition(0)
+            totalnya = cursor.getString(cursor.getColumnIndex(COL_TOTAL))
+//        }
+        db.close()
+        return totalnya
+    }
     //CRUD DetailReimbusment b
+
+//    username
+    fun updateusername(namanya: String)
+    {
+        val db = this.writableDatabase
+        val updatetotal = ("UPDATE $TABLE_USERNAME SET $COL_USERNAME = '$namanya' WHERE $COL_ID_USERNAME = 1")
+        db!!.execSQL(updatetotal)
+        db.close()
+    }
+
+    fun ambilNama(): String {
+        val namanya:String
+        val db = this.writableDatabase
+        val ambilkan = ("SELECT $COL_USERNAME FROM $TABLE_USERNAME WHERE $COL_ID_REIMBURS = 1")
+        val cursor = db.rawQuery(ambilkan,null)
+        cursor.moveToFirst()
+        cursor.moveToPosition(0)
+        namanya = cursor.getString(cursor.getColumnIndex(COL_USERNAME))
+        db.close()
+        return namanya
+    }
+//    username
 }

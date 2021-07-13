@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.conceptdesign.re_claim.MainActivity
 import com.conceptdesign.re_claim.Model.DetailReimbursment
 import com.conceptdesign.re_claim.R
 import com.conceptdesign.re_claim.UpdateActivity
@@ -25,7 +26,8 @@ class ListMyClaimAdapterDetail(val lstReimburs:List<DetailReimbursment>, val ite
     inner class MyHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         fun bind(get:DetailReimbursment?, clickListener: UpdateActivity){
             itemView.id_txt_detail_claim.text = get?.keperluan
-            val total ="Rp. ${get?.nominal}"
+            val nilairp = get?.nominal?.toDouble()?.let { MainActivity.rupiah(it) }
+            val total ="Rp. ${nilairp?.replace("Rp","")}"
             itemView.id_txt_total_detail.text = total
 
             itemView.setOnClickListener { clickListener.onItemClicked(get) }

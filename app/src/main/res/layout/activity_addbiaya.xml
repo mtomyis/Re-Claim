@@ -62,7 +62,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="40"
-            android:text="Uang Perusahaan" />
+            android:buttonTint="#3F51B5"
+            android:text="Perusahaan" />
 
         <Space
             android:layout_width="wrap_content"
@@ -71,10 +72,11 @@
 
         <RadioButton
             android:id="@+id/R2"
+            android:buttonTint="@color/purple_700"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="40"
-            android:text="Uang Pribadi" />
+            android:text="Pribadi" />
     </RadioGroup>
 
     <EditText
@@ -116,6 +118,7 @@
         android:id="@+id/btn_pilihgambar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="#3F51B5"
         android:text="Pilih Gambar"
         app:layout_constraintStart_toStartOf="@+id/ed_tglbiaya"
         app:layout_constraintTop_toBottomOf="@+id/ed_tglbiaya"
@@ -153,6 +156,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8ssp"
         android:text="Simpan"
+        android:backgroundTint="#3F51B5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/id_scrolimg"

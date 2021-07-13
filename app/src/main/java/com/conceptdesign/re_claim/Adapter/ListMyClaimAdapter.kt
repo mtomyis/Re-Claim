@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.conceptdesign.re_claim.MainActivity
+import com.conceptdesign.re_claim.MainActivity.Companion.rupiah
 import com.conceptdesign.re_claim.Model.Reimbursement
 import com.conceptdesign.re_claim.R
 import kotlinx.android.synthetic.main.item_claim.view.*
@@ -27,7 +28,8 @@ class ListMyClaimAdapter(val lstReimburs:List<Reimbursement>, val itemClickListe
         fun bind(get:Reimbursement?,clickListener:MainActivity){
             itemView.id_txt_judul_claim.text = get?.reimburs
             itemView.id_txt_tanggal.text = get?.tgl
-            val total ="Rp. ${get?.total}"
+            val nilairp = get?.total?.toDouble()?.let { rupiah(it) }
+            val total ="Rp. ${nilairp?.replace("Rp","")}"
             itemView.id_txt_total.text = total
 
             itemView.setOnClickListener { clickListener.onItemClicked(get) }

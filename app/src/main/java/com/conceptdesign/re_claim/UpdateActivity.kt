@@ -7,7 +7,6 @@ import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -34,7 +33,9 @@ import com.conceptdesign.re_claim.MainActivity.Companion.STATUS
 import com.conceptdesign.re_claim.MainActivity.Companion.TANGGAL
 import com.conceptdesign.re_claim.MainActivity.Companion.TOTAL
 import com.conceptdesign.re_claim.Model.DetailReimbursment
+import com.conceptdesign.re_claim.Model.M_detailReimbusment
 import com.conceptdesign.re_claim.Model.M_reimbusment
+import com.conceptdesign.re_claim.Model.Reimbursement
 import com.itextpdf.io.image.ImageData
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.geom.PageSize
@@ -45,6 +46,7 @@ import com.itextpdf.layout.borders.Border
 import com.itextpdf.layout.element.*
 import com.itextpdf.layout.property.TextAlignment
 import com.itextpdf.layout.property.UnitValue
+import com.itextpdf.layout.property.VerticalAlignment
 import kotlinx.android.synthetic.main.activity_create.*
 import java.io.File
 import java.text.ParseException
@@ -58,17 +60,27 @@ class UpdateActivity : AppCompatActivity() {
 
     private val STORAGE_CODE: Int = 100
 
-    lateinit var bitmap: Bitmap
-    lateinit var scaleBitmap: Bitmap
-
     internal lateinit var db: DBHelper
     internal var lstDetailReimb:List<DetailReimbursment> = ArrayList<DetailReimbursment>()
+    internal var lstReimb:List<Reimbursement> = ArrayList<Reimbursement>()
 
     lateinit var tanggalawal : String
     lateinit var tanggalfix : String
 
+    var idre : Int = 0
+    var total : String = ""
+
     override fun onStart() {
         tampilkanData()
+//        ambil nilai terbaru
+        idre = intent.getIntExtra(ID,0)
+//        if (db.ambilNilai(idre)!=null){
+            val nilairp = db.ambilNilai(idre).toDouble().let { MainActivity.rupiah(it) }
+            total = nilairp.replace("Rp","")
+//        }else{
+//            total="0"
+//        }
+        id_total_reimbus.setText(total)
         super.onStart()
     }
 
@@ -98,7 +110,6 @@ class UpdateActivity : AppCompatActivity() {
         val edsaldo = findViewById(R.id.ed_saldo) as EditText
 
         namareimbus.setText(intent.getStringExtra(REIMBUST)!!.toString())
-        id_total_reimbus.setText(intent.getStringExtra(TOTAL)!!.toString())
         edsaldo.setText(intent.getStringExtra(SALDO)!!.toString())
 
 //        hidden btn
@@ -198,7 +209,11 @@ class UpdateActivity : AppCompatActivity() {
                         requestPermissions(permissions, STORAGE_CODE)
                     }
                     else{
-                        //permission already granted, call savePdf() method
+//                        lstReimb = db.getOneReimburs(idre)
+//                        val nilaisaldorp = lstReimb.get(0).saldo.toString().toDouble().let { MainActivity.rupiah(it) }
+//                        val nominalsaldo ="Rp. ${nilaisaldorp.replace("Rp","")}"
+//                        Log.d("saldonya :",lstReimb.get(0).saldo.toString())
+//                        permission already granted, call savePdf() method
                         crtPDF()
                     }
                 }
@@ -239,6 +254,7 @@ class UpdateActivity : AppCompatActivity() {
     }
 
     fun crtPDF(){
+        lstReimb = db.getOneReimburs(idre)
         val folder = File(Environment.getExternalStorageDirectory().toString() + "/Reclaim/Pdf/")
         var success = true
         if (!folder.exists()) {
@@ -252,7 +268,7 @@ class UpdateActivity : AppCompatActivity() {
             Log.d("datadetail : ", "Folder Pdf gagal dibuat")
         }
         //create object of Document class
-        val mFileName = "Judul Klaim-"+SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())
+        val mFileName = "${lstReimb.get(0).reimburs.toString()}-"+SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())
         //pdf file path
         val mFilePath = Environment.getExternalStorageDirectory().toString() + "/Reclaim/Pdf/" + mFileName +".pdf"
 
@@ -261,7 +277,7 @@ class UpdateActivity : AppCompatActivity() {
         val document = Document(pdfDocument)
 
 //        buat judulnya
-        val judulKlaim = Paragraph("Judul Claim")
+        val judulKlaim = Paragraph("Laporan Reimbursement ${lstReimb.get(0).reimburs.toString()}")
         judulKlaim.setTextAlignment(TextAlignment.CENTER)
         judulKlaim.setFontSize(12f)
         judulKlaim.setBold()
@@ -269,26 +285,31 @@ class UpdateActivity : AppCompatActivity() {
 
 //        buat detailnya
         val tabledetail = Table(UnitValue.createPercentArray(floatArrayOf(2f, 0f, 3f)))
-        tabledetail.setFontSize(9f)
+        tabledetail.setFontSize(10f)
+        tabledetail.setVerticalAlignment(VerticalAlignment.MIDDLE)
+
+        val nilaisaldorp = lstReimb.get(0).saldo.toString().toDouble().let { MainActivity.rupiah(it) }
+        val nominalsaldo ="Rp. ${nilaisaldorp.replace("Rp","")}"
 
         tabledetail.addCell(Cell().add(Paragraph("Nama").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
         tabledetail.addCell(Cell().add(Paragraph(":").setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
-        tabledetail.addCell(Cell().add(Paragraph("Username").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph(db.ambilNama()).setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
         tabledetail.addCell(Cell().add(Paragraph("Reimbursement").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
         tabledetail.addCell(Cell().add(Paragraph(":").setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
-        tabledetail.addCell(Cell().add(Paragraph("Judul reimbursement").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph(lstReimb.get(0).reimburs.toString()).setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
         tabledetail.addCell(Cell().add(Paragraph("Tanggal").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
         tabledetail.addCell(Cell().add(Paragraph(":").setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
-        tabledetail.addCell(Cell().add(Paragraph("03/03/2021").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph(lstReimb.get(0).tgl.toString()).setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
         tabledetail.addCell(Cell().add(Paragraph("Saldo Awal").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
         tabledetail.addCell(Cell().add(Paragraph(":").setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
-        tabledetail.addCell(Cell().add(Paragraph("Rp. 650.000").setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
+        tabledetail.addCell(Cell().add(Paragraph(nominalsaldo).setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER))
         document.add(tabledetail)
 
 //        coba buat table
-        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 60f, 37f, 1f))).useAllAvailableWidth()
+        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 15f, 55f, 25f, 15f))).useAllAvailableWidth()
         table.setMarginTop(10f)
-        table.setFontSize(9f)
+        table.setFontSize(10f)
+        table.setVerticalAlignment(VerticalAlignment.MIDDLE)
         //Add Header Cells
         table.addHeaderCell(Cell().add(Paragraph("No.").setTextAlignment(TextAlignment.CENTER)))
         table.addHeaderCell(Cell().add(Paragraph("Tanggal").setTextAlignment(TextAlignment.CENTER)))
@@ -296,36 +317,53 @@ class UpdateActivity : AppCompatActivity() {
         table.addHeaderCell(Cell().add(Paragraph("Nominal").setTextAlignment(TextAlignment.CENTER)))
         table.addHeaderCell(Cell().add(Paragraph("Uang Milik").setTextAlignment(TextAlignment.CENTER)))
 
-//        for (entry in entries) {
-//            table.addCell(Cell().add(Paragraph(shortDateFormat.format(entry.createdOn)).setTextAlignment(TextAlignment.CENTER)))
-//            table.addCell(entry.getJobName())
-//            table.addCell(Cell().add(Paragraph(entry.jobSize).setTextAlignment(TextAlignment.CENTER)))
-//            table.addCell(Cell().add(Paragraph(entry.getJobType().replace("Pouch", "")).setTextAlignment(TextAlignment.CENTER)))
-//            table.addCell(Cell().add(Paragraph(entry.quantity).setTextAlignment(TextAlignment.CENTER)))
-//            table.addCell(Cell().add(Paragraph(entry.rate).setTextAlignment(TextAlignment.CENTER)))
-//            table.addCell(Cell().add(Paragraph(entry.amount).setTextAlignment(TextAlignment.RIGHT)))
-//        }
-        table.addCell(Cell().add(Paragraph("1.").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell(Cell().add(Paragraph("03/03/2021").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell(Cell().add(Paragraph("Membeli Materai 4 dan juga bla bla bla").setTextAlignment(TextAlignment.LEFT)))
-        table.addCell(Cell().add(Paragraph("30.000").setTextAlignment(TextAlignment.RIGHT)))
-        table.addCell(Cell().add(Paragraph("Perusahaan").setTextAlignment(TextAlignment.CENTER)))
+//        looping menampilkan datanya
+        var no : Int = 1
+        for (item in lstDetailReimb){
 
-        table.addCell(Cell().add(Paragraph("2.").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell(Cell().add(Paragraph("03/03/2021").setTextAlignment(TextAlignment.CENTER)))
-        table.addCell(Cell().add(Paragraph("Membeli Materai").setTextAlignment(TextAlignment.LEFT)))
-        table.addCell(Cell().add(Paragraph("30.000").setTextAlignment(TextAlignment.RIGHT)))
-        table.addCell(Cell().add(Paragraph("Perusahaan").setTextAlignment(TextAlignment.CENTER)))
+            val nilairp = item.nominal?.toDouble()?.let { MainActivity.rupiah(it) }
+            val nominal ="Rp. ${nilairp?.replace("Rp","")}"
+
+            table.addCell(Cell().add(Paragraph("${no}").setTextAlignment(TextAlignment.CENTER)))
+            table.addCell(Cell().add(Paragraph("${item.tgl}").setTextAlignment(TextAlignment.CENTER)))
+            table.addCell(Cell().add(Paragraph("${item.keperluan}").setTextAlignment(TextAlignment.LEFT)))
+            table.addCell(Cell().add(Paragraph(nominal).setTextAlignment(TextAlignment.RIGHT)))
+            table.addCell(Cell().add(Paragraph("${item.milik}").setTextAlignment(TextAlignment.CENTER)))
+            no++
+        }
+
+//        table.addCell(Cell().add(Paragraph("1.").setTextAlignment(TextAlignment.CENTER)))
+//        table.addCell(Cell().add(Paragraph("03/03/2021").setTextAlignment(TextAlignment.CENTER)))
+//        table.addCell(Cell().add(Paragraph("Membeli Materai 4 dan juga bla bla bla").setTextAlignment(TextAlignment.LEFT)))
+//        table.addCell(Cell().add(Paragraph("30.000").setTextAlignment(TextAlignment.RIGHT)))
+//        table.addCell(Cell().add(Paragraph("Perusahaan").setTextAlignment(TextAlignment.CENTER)))
+//
+//        table.addCell(Cell().add(Paragraph("2.").setTextAlignment(TextAlignment.CENTER)))
+//        table.addCell(Cell().add(Paragraph("03/03/2021").setTextAlignment(TextAlignment.CENTER)))
+//        table.addCell(Cell().add(Paragraph("Membeli Materai").setTextAlignment(TextAlignment.LEFT)))
+//        table.addCell(Cell().add(Paragraph("30.000").setTextAlignment(TextAlignment.RIGHT)))
+//        table.addCell(Cell().add(Paragraph("Perusahaan").setTextAlignment(TextAlignment.CENTER)))
+        val nilaitotalrp = lstReimb.get(0).total.toString().toDouble().let { MainActivity.rupiah(it) }
+        val nominaltotal ="Rp. ${nilaitotalrp.replace("Rp","")}"
+
+//        val nilaisaldorp = intent.getStringExtra(TOTAL)!!.toString().toDouble().let { MainActivity.rupiah(it) }
+//        val nominalsaldo ="Rp. ${nilaisaldorp.replace("Rp","")}"
 
         table.addCell(Cell(1,3).add(Paragraph("Total dikeluarkan").setTextAlignment(TextAlignment.RIGHT)))
-        table.addCell(Cell().add(Paragraph("60.000").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph(nominaltotal).setTextAlignment(TextAlignment.RIGHT)))
         table.addCell(Cell(3,1).add(Paragraph("").setTextAlignment(TextAlignment.CENTER)))
 
         table.addCell(Cell(1,3).add(Paragraph("Saldo awal").setTextAlignment(TextAlignment.RIGHT)))
-        table.addCell(Cell().add(Paragraph("60.000").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph(nominalsaldo).setTextAlignment(TextAlignment.RIGHT)))
+
+//        rumusnya
+        val sisanya = ( lstReimb.get(0).saldo!!.toInt() - lstReimb.get(0).total!!.toInt() )
+
+        val nilaisisarp = sisanya.toDouble().let { MainActivity.rupiah(it) }
+        val nominalsisa ="Rp. ${nilaisisarp.replace("Rp","")}"
 
         table.addCell(Cell(1,3).add(Paragraph("Sisa").setTextAlignment(TextAlignment.RIGHT)))
-        table.addCell(Cell().add(Paragraph("0").setTextAlignment(TextAlignment.RIGHT)))
+        table.addCell(Cell().add(Paragraph(nominalsisa).setTextAlignment(TextAlignment.RIGHT)))
 
         document.add(table)
 
@@ -340,20 +378,31 @@ class UpdateActivity : AppCompatActivity() {
 
         val tablegambar = Table(UnitValue.createPercentArray(floatArrayOf(1f, 29f))).useAllAvailableWidth()
         tablegambar.setMarginTop(10f)
-        tablegambar.setFontSize(9f)
+        tablegambar.setFontSize(10f)
+        tablegambar.setVerticalAlignment(VerticalAlignment.MIDDLE)
 
-        tablegambar.addCell(Cell().add(Paragraph("1").setTextAlignment(TextAlignment.CENTER)))
-        tablegambar.addCell(Cell().add(Paragraph("Membeli Materai 4 dan juga bla bla bla").setTextAlignment(TextAlignment.LEFT)))
-        val cellgambar = Cell(1,2)
-        cellgambar.setTextAlignment(TextAlignment.CENTER)
-        cellgambar.setPadding(5f)
-        val imageFile = Environment.getExternalStorageDirectory().toString() + "/Reclaim/1625470348398.jpg"
-        val data: ImageData = ImageDataFactory.create(imageFile)
-        val img = Image(data)
-        cellgambar.add(img.setWidth(200f))
-        tablegambar.addCell(cellgambar)
-        tablegambar.addCell(Cell(1,2).add(Paragraph("").setTextAlignment(TextAlignment.CENTER)))
-
+        var nom : Int = 1
+        for (itemm in lstDetailReimb) {
+            tablegambar.addCell(Cell().add(Paragraph("${nom}").setTextAlignment(TextAlignment.CENTER)))
+            tablegambar.addCell(Cell().add(Paragraph("${itemm.keperluan}").setTextAlignment(TextAlignment.LEFT)))
+            val cellgambar = Cell(1, 2)
+            cellgambar.setTextAlignment(TextAlignment.CENTER)
+            cellgambar.setPadding(5f)
+            val imageFile = Environment.getExternalStorageDirectory().toString() + "/Reclaim/${itemm.src}"
+            val file = File(imageFile)
+            val fileExists = file.exists()
+//            if(fileExists){
+            if(itemm.src.toString()!="" && fileExists){
+                val data: ImageData = ImageDataFactory.create(imageFile)
+                val img = Image(data)
+                cellgambar.add(img.setWidth(200f))
+                tablegambar.addCell(cellgambar)
+            } else {
+                tablegambar.addCell(Cell(1, 2).add(Paragraph("Gambar tidak tersedia").setTextAlignment(TextAlignment.CENTER)))
+            }
+            tablegambar.addCell(Cell(1, 2).add(Paragraph("").setTextAlignment(TextAlignment.CENTER)))
+            nom++
+        }
 //        tablegambar.addCell(Cell().add(Paragraph("2").setTextAlignment(TextAlignment.CENTER)))
 //        tablegambar.addCell(Cell().add(Paragraph("Membeli Materai").setTextAlignment(TextAlignment.LEFT)))
 //        val cellgambar2 = Cell(1,2)

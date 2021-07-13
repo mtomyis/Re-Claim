@@ -157,10 +157,15 @@ class AddbiayaActivity : AppCompatActivity() {
                 )
 //                Log.d("datadetail : ", ""+add_detailReimbursment.fk)
                 db.addDetailReimburs(add_detailReimbursment)
+//                jumlah semua pengeluaran
+                db.updateNilai(intent.getIntExtra(MainActivity.ID,0))
+//                trus save
+//                bersihkan field
                 Toast.makeText(this, "Berhasil Tersimpan", Toast.LENGTH_LONG).show()
-//                keperluan.getText().clear()
-//                ed_nominal.getText().clear()
+                keperluan.getText().clear()
+                ed_nominal.getText().clear()
 //                tglreimbus.getText().clear()
+                imageviewnya.setImageResource(0)
 //                src set clear
 //                Toast.makeText(applicationContext,"On button click :" +" ${radio.text}",Toast.LENGTH_SHORT).show()
             }else{
